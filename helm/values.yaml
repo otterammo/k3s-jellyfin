@@ -1,0 +1,129 @@
+# Jellyfin Media Server Helm Values
+# Official helm chart: https://jellyfin.github.io/jellyfin-helm
+
+# Image configuration - use chart default (latest stable)
+image:
+  repository: docker.io/jellyfin/jellyfin
+  pullPolicy: IfNotPresent
+  # tag: ""  # Uses chart appVersion by default
+
+# Use existing PVCs created outside helm chart
+persistence:
+  config:
+    enabled: true
+    existingClaim: "jellyfin-config"
+
+  cache:
+    enabled: true
+    type: pvc
+    existingClaim: "jellyfin-cache"
+
+  # Disable media PVC - we'll use volumes instead
+  media:
+    enabled: false
+
+# Service configuration with Tailscale annotations
+service:
+  type: ClusterIP
+  port: 8096
+  annotations:
+    tailscale.com/expose: "true"
+    tailscale.com/hostname: "jellyfin"
+
+# Resource limits - adjust based on usage
+resources:
+  requests:
+    cpu: "1000m"
+    memory: "2Gi"
+  limits:
+    cpu: "4000m"
+    memory: "8Gi"
+
+# Health probes
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 30
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+startupProbe:
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 0
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 30
+
+# Pin to control-plane node with external storage
+nodeSelector:
+  storage: external
+
+# Environment variables
+jellyfin:
+  env:
+    - name: TZ
+      value: "America/Chicago"
+    - name: JELLYFIN_PublishedServerUrl
+      value: "http://jellyfin"
+
+# Extra volumes for media - read-only hostPath
+volumes:
+  # TV shows
+  - name: tv
+    hostPath:
+      path: /mnt/external/tv
+      type: DirectoryOrCreate
+  # Movies
+  - name: movies
+    hostPath:
+      path: /mnt/external/movies
+      type: DirectoryOrCreate
+  # Optional: Hardware acceleration (Intel QuickSync)
+  # Uncomment when needed:
+  # - name: dev-dri
+  #   hostPath:
+  #     path: /dev/dri
+  #     type: Directory
+
+# Extra volume mounts
+volumeMounts:
+  - name: tv
+    mountPath: /media/tv
+    readOnly: true
+  - name: movies
+    mountPath: /media/movies
+    readOnly: true
+  # Optional: Intel QuickSync (uncomment when needed)
+  # - name: dev-dri
+  #   mountPath: /dev/dri
+
+# Security context - run as non-root
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  runAsNonRoot: true
+  readOnlyRootFilesystem: false
+
+# Disable ingress (using Tailscale instead)
+ingress:
+  enabled: false
+
+# Service account
+serviceAccount:
+  create: true
+  automount: false
