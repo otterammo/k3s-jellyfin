@@ -39,33 +39,6 @@ resources:
     cpu: "4000m"
     memory: "8Gi"
 
-# Health probes
-livenessProbe:
-  httpGet:
-    path: /health
-    port: http
-  initialDelaySeconds: 30
-  periodSeconds: 30
-  timeoutSeconds: 5
-  failureThreshold: 3
-
-readinessProbe:
-  httpGet:
-    path: /health
-    port: http
-  initialDelaySeconds: 10
-  periodSeconds: 10
-  timeoutSeconds: 5
-  failureThreshold: 3
-
-startupProbe:
-  tcpSocket:
-    port: http
-  initialDelaySeconds: 0
-  periodSeconds: 10
-  timeoutSeconds: 5
-  failureThreshold: 30
-
 # Pin to control-plane node with external storage
 nodeSelector:
   storage: external
