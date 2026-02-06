@@ -6,7 +6,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: longhorn
+  storageClassName: longhorn-jellyfin
   resources:
     requests:
-      storage: 20Gi
+      storage: 10Gi
