@@ -9,4 +9,4 @@ spec:
   storageClassName: longhorn-jellyfin
   resources:
     requests:
-      storage: 10Gi
+      storage: 30Gi
