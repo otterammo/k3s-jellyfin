@@ -203,19 +203,6 @@ make clean         # Remove Jellyfin but keep PVCs
 make destroy       # Remove Jellyfin completely (with confirmation)
 ```
 
-## Comparison with Plex
-
-Both Jellyfin and Plex can coexist on the same cluster:
-
-| Feature | Jellyfin | Plex |
-|---------|----------|------|
-| License | Open source (GPL) | Freemium (Plex Pass) |
-| Tailscale Hostname | `jellyfin` | `plex` |
-| Port | 8096 | 32400 |
-| Config PVC | 20Gi Longhorn | 20Gi Longhorn |
-| Cache/Transcode | 15Gi Longhorn | 15Gi Longhorn |
-| Media | Shared (`/mnt/external`) | Shared (`/mnt/external`) |
-
 ## License
 
 This configuration is part of the k3s homelab cluster setup.
