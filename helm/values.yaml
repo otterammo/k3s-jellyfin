@@ -13,11 +13,6 @@ persistence:
     enabled: true
     existingClaim: "jellyfin-config"
 
-  cache:
-    enabled: true
-    type: pvc
-    existingClaim: "jellyfin-cache"
-
   # Disable media PVC - we'll use volumes instead
   media:
     enabled: false
@@ -53,6 +48,10 @@ jellyfin:
 
 # Extra volumes for media - read-only hostPath
 volumes:
+  # Cache volume (for transcoding)
+  - name: cache
+    persistentVolumeClaim:
+      claimName: jellyfin-cache
   # TV shows
   - name: tv
     hostPath:
@@ -72,6 +71,8 @@ volumes:
 
 # Extra volume mounts
 volumeMounts:
+  - name: cache
+    mountPath: /cache
   - name: tv
     mountPath: /media/tv
     readOnly: true
