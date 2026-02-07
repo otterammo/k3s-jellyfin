@@ -67,12 +67,11 @@ volumes:
     hostPath:
       path: /mnt/external/movies
       type: DirectoryOrCreate
-  # Optional: Hardware acceleration (Intel QuickSync)
-  # Uncomment when needed:
-  # - name: dev-dri
-  #   hostPath:
-  #     path: /dev/dri
-  #     type: Directory
+  # Hardware acceleration (Intel QuickSync)
+  - name: dev-dri
+    hostPath:
+      path: /dev/dri
+      type: Directory
 
 # Extra volume mounts
 volumeMounts:
@@ -84,13 +83,16 @@ volumeMounts:
   - name: movies
     mountPath: /media/movies
     readOnly: true
-  # Optional: Intel QuickSync (uncomment when needed)
-  # - name: dev-dri
-  #   mountPath: /dev/dri
+  # Intel QuickSync
+  - name: dev-dri
+    mountPath: /dev/dri
 
 # Security context - run as non-root
 podSecurityContext:
   fsGroup: 1000
+  supplementalGroups:
+    - 44   # video
+    - 993  # render
 
 securityContext:
   runAsUser: 1000
