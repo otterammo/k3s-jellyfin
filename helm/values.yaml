@@ -38,6 +38,11 @@ resources:
 nodeSelector:
   storage: external
 
+# Use Recreate strategy instead of RollingUpdate
+# Required because RWO PVCs can only attach to one pod at a time
+strategy:
+  type: Recreate
+
 # Environment variables
 jellyfin:
   env:
