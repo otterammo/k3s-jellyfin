@@ -40,7 +40,7 @@ nodeSelector:
 
 # Use Recreate strategy instead of RollingUpdate
 # Required because RWO PVCs can only attach to one pod at a time
-strategy:
+deploymentStrategy:
   type: Recreate
 
 # Environment variables
