@@ -106,6 +106,7 @@ volumeMounts:
 # since /dev/dri hardware acceleration is disabled for worker node scheduling.
 podSecurityContext:
   fsGroup: 1000
+  fsGroupChangePolicy: OnRootMismatch  # skip recursive chown if root dir already has correct ownership
 
 securityContext:
   runAsUser: 1000
